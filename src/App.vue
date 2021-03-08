@@ -39,6 +39,7 @@
               name="First name"
               id="first_name"
               v-model.trim="first_name"
+              :value="first_name"
               :validationState="$v.first_name"
           />
           <inputErrorHandler
@@ -49,6 +50,7 @@
               name="Last name"
               id="last_name"
               v-model.trim="last_name"
+              :value="last_name"
               :validationState="$v.last_name"
           />
           <inputErrorHandler
@@ -59,6 +61,7 @@
               name="Email address"
               id="email"
               v-model.trim="email"
+              :value="email"
               :validationState="$v.email"
           />
           <inputErrorHandler
@@ -79,7 +82,7 @@
                   type="text"
                   id="card_name"
                   class="border rounded-4 text-16 p-11 w-full"
-                  v-model="Fullname"
+                  v-model.trim="Fullname"
                   :class=" $v.full_name.$error ? 'border-red-700' :  'border-grey-100' "
               >
             </div>
@@ -99,7 +102,7 @@
                   class="border rounded-4 text-16 p-11 w-full "
                   :class=" $v.card_number.$error ? 'border-red-700' : 'border-grey-100' "
                   v-model="card_number"
-                  v-cleave="{creditCard: true, onCreditCardTypeChanged : cardChanged, autoMask: true}"
+                  v-cleave="{creditCard: true,  autoMask: true}"
               />
               <div class="absolute right-14 top-0 bottom-0 flex">
                 <img src="@/assets/icons/card.svg" alt="card">
@@ -123,7 +126,7 @@
                        class="border rounded-4 text-16 p-11 w-full"
                        :class=" $v.card_number.$error ? 'border-red-700' : 'border-grey-100' "
                        v-model.trim="expiry_date"
-                       v-cleave="{date: true,datePattern: ['m', 'y']}"
+                       v-cleave="{date: true, datePattern: ['m', 'y']}"
                 >
               </div>
               <inputErrorHandler
@@ -140,7 +143,7 @@
                        class="border rounded-4 text-16 p-11 w-full"
                        :class=" $v.cvc.$error ? 'border-red-700' : 'border-grey-100' "
                        v-model.trim="cvc"
-                       v-cleave="{numeral: true,numeralPositiveOnly: true,numeralIntegerScale: 6}"
+                       v-cleave="{numeral: true, numeralPositiveOnly: true, numeralIntegerScale: 6}"
                 >
                 <div class="absolute right-14 top-0 bottom-0 flex">
                   <img src="@/assets/icons/question.svg" alt="card">
@@ -205,7 +208,7 @@ import inputErrorHandler from './components/input-error-handler.vue'
 import inputRadioComponent from './components/input-radio-component.vue'
 import Cleave from 'cleave.js';
 
-import {required, minLength, maxLength, email} from 'vuelidate/lib/validators'
+import {required, minLength, email} from 'vuelidate/lib/validators'
 
 export default {
   name: 'App',
@@ -235,6 +238,7 @@ export default {
   },
   methods: {
     submit() {
+
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('error!')
@@ -249,31 +253,29 @@ export default {
           this.first_name = ''
           this.last_name = ''
           this.full_name = ''
-
           this.email = ''
+
           this.card_number = ''
           this.expiry_date = ''
           this.cvc = ''
+
           this.checkbox = null
-          this.price = false
+          this.price = ''
 
           this.$v.$reset()
 
           let radioInputs = this.$refs.radio.$parent.$children
-          for (let i = 0; i < radioInputs.length; i++) {
+          for (let i = 0; i < radioInputs.length-1; i++) {
+            if(i === 2){
+              return false
+            }
             radioInputs[i].$el.children[0].checked = false
           }
-          this.$refs.radio.$el.children[0].checked = false
-
-
-
 
 
         }, 500)
       }
     },
-    cardChanged(e) {
-    }
   },
   validations: {
     price: {

@@ -11,7 +11,8 @@
           :id="id"
           class="border rounded-4 text-16 p-11 w-full"
           @input="getInputValue"
-          :class=" validationState.$error ? 'border-red-700' :  'border-grey-100' "
+          :class="validationState.$error ? 'border-red-700' : 'border-grey-100'"
+          :value="value"
       >
     </div>
   </div>
@@ -25,11 +26,15 @@ export default {
       type: String,
       required: true
     },
+    value: {
+      type: String,
+      required: true
+    },
     id: {
       type: String,
       required: true
     },
-    validationState:{
+    validationState: {
       type: Object,
       required: true
     }
@@ -38,7 +43,7 @@ export default {
     return {}
   },
   methods: {
-    getInputValue (e){
+    getInputValue(e) {
       this.$emit('input', e.target.value)
     }
   }

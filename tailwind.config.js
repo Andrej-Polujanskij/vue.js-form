@@ -1,7 +1,11 @@
 module.exports = {
     theme: {
         extend: {
+            width: {
+              160: '16rem'
+            },
             colors: {
+                'orange-50': '#faebd7',
                 'red-50': '#ffcfcf',
                 'blue-100': '#EDF5FF',
                 'blue-150': '#A3C8FF',
@@ -39,6 +43,9 @@ module.exports = {
             18: '1.8rem',
             22: '2.2rem',
             24: '2.4rem'
+        },
+        lineHeight: {
+            18: '1.8rem'
         },
         borderRadius: {
             2: '0.2rem',

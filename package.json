@@ -15,7 +15,8 @@
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vue": "^2.6.11",
-    "vue-cleave-component": "^3.0.0"
+    "vue-cleave-component": "^3.0.0",
+    "vuelidate": "^0.7.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -23,8 +24,7 @@
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-tailwind": "~2.0.6",
-    "vue-template-compiler": "^2.6.11",
-    "vuelidate": "^0.7.6"
+    "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [
     "> 1%",

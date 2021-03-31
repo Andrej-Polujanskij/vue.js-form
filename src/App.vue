@@ -5,27 +5,21 @@
       <div class="max-w-38 py-24 mx-auto">
         <form
             @submit.prevent="submit"
-            :class="blur ? 'blur' : '' "
+            :class="{'blur': blur}"
         >
           <div class="flex justify-between ">
 
             <inputRadioComponent
-                title="$99 Plan"
-                inputValue="99"
-                id="price-1"
+                v-for="item in dataPrice"
+                :key="item.id"
+                :title="item.title"
+                :value="item.price"
+                :id="item.id"
                 :validationState="$v.price"
-                v-model="price"
-                ref="radio"
+                @input="setPrice"
+
             />
 
-            <inputRadioComponent
-                title="$179 Plan"
-                inputValue="179"
-                id="price-2"
-                :validationState="$v.price"
-                v-model="price"
-                ref="radio"
-            />
           </div>
           <inputErrorHandler
               :validationState="$v.price"
@@ -38,30 +32,27 @@
           <inputComponent
               name="First name"
               id="first_name"
-              v-model.trim="first_name"
-              :value="first_name"
-              :validationState="$v.first_name"
+              v-model.trim="firstName"
+              :validationState="$v.firstName"
           />
           <inputErrorHandler
-              :validationState="$v.first_name"
+              :validationState="$v.firstName"
           />
 
           <inputComponent
               name="Last name"
-              id="last_name"
-              v-model.trim="last_name"
-              :value="last_name"
-              :validationState="$v.last_name"
+              id="lastName"
+              v-model.trim="lastName"
+              :validationState="$v.lastName"
           />
           <inputErrorHandler
-              :validationState="$v.last_name"
+              :validationState="$v.lastName"
           />
 
           <inputComponent
               name="Email address"
               id="email"
               v-model.trim="email"
-              :value="email"
               :validationState="$v.email"
           />
           <inputErrorHandler
@@ -78,16 +69,15 @@
             </label>
             <div class="relative">
               <input
-                  readonly
                   type="text"
                   id="card_name"
                   class="border rounded-4 text-16 p-11 w-full"
-                  v-model.trim="Fullname"
-                  :class=" $v.full_name.$error ? 'border-red-700' :  'border-grey-100' "
+                  v-model="Fullname"
+                  :class=" $v.fullName.$error ? 'border-red-700' :  'border-grey-100' "
               >
             </div>
             <inputErrorHandler
-                :validationState="$v.full_name"
+                :validationState="$v.fullName"
             />
           </div>
           <div class="flex flex-col">
@@ -102,10 +92,10 @@
                   class="border rounded-4 text-16 p-11 w-full "
                   :class=" $v.card_number.$error ? 'border-red-700' : 'border-grey-100' "
                   v-model="card_number"
-                  v-cleave="{creditCard: true,  autoMask: true}"
+                  v-cleave="{creditCard: true,  autoMask: true, onCreditCardTypeChanged : cardChanged}"
               />
               <div class="absolute right-14 top-0 bottom-0 flex">
-                <img src="@/assets/icons/card.svg" alt="card">
+                <img :src="imagePath" alt="card">
               </div>
             </div>
             <inputErrorHandler
@@ -124,7 +114,7 @@
                 <input type="text"
                        id="expiry_date"
                        class="border rounded-4 text-16 p-11 w-full"
-                       :class=" $v.card_number.$error ? 'border-red-700' : 'border-grey-100' "
+                       :class=" $v.expiry_date.$error ? 'border-red-700' : 'border-grey-100' "
                        v-model.trim="expiry_date"
                        v-cleave="{date: true, datePattern: ['m', 'y']}"
                 >
@@ -146,7 +136,19 @@
                        v-cleave="{numeral: true, numeralPositiveOnly: true, numeralIntegerScale: 6}"
                 >
                 <div class="absolute right-14 top-0 bottom-0 flex">
-                  <img src="@/assets/icons/question.svg" alt="card">
+                  <img
+                      src="@/assets/icons/question.svg"
+                      alt="card"
+                  >
+                <div class="absolute cursor-pointer w-full h-full"  @click="tooltipHandler" v-clickOutside="closeEvent">
+                  <TooltipComponent
+                    :openState="tooltipOpen"
+                  >
+                    <p>The <span class="font-bold">3 (or 4)</span> digits on the back of your credit card</p>
+                    <img class="pt-5" src="@/assets/images/CVV.jpg" alt="">
+                  </TooltipComponent>
+                </div>
+
                 </div>
               </div>
               <inputErrorHandler
@@ -203,56 +205,127 @@
 </template>
 
 <script>
-import inputComponent from './components/input-component.vue'
-import inputErrorHandler from './components/input-error-handler.vue'
-import inputRadioComponent from './components/input-radio-component.vue'
+import InputComponent from './components/input-component.vue'
+import InputErrorHandler from './components/input-error-handler.vue'
+import InputRadioComponent from './components/input-radio-component.vue'
+import TooltipComponent from './components/tooltip-component.vue'
 import Cleave from 'cleave.js';
+import data from './data/plans.json'
+import cards from '@/assets/icons'
 
 import {required, minLength, email} from 'vuelidate/lib/validators'
 
 export default {
   name: 'App',
   components: {
-    inputComponent,
-    inputErrorHandler,
-    inputRadioComponent,
+    InputComponent,
+    InputErrorHandler,
+    InputRadioComponent,
+    TooltipComponent
   },
   data() {
     return {
-      full_name: '',
-      price: null,
-      first_name: '',
-      last_name: '',
+      price: '',
+      firstName: '',
+      lastName: '',
+      fullName: '',
       email: '',
       checkbox: null,
       card_number: '',
       expiry_date: '',
       cvc: '',
-      blur: false
+      blur: false,
+      dataPrice: [],
+      cardHolderNameState: true,
+      imagePath: '',
+      tooltipOpen: false
     }
   },
   computed: {
-    Fullname() {
-      return this.full_name = this.first_name + ' ' + this.last_name
+    Fullname: {
+      get() {
+        if(this.cardHolderNameState === true){
+          return this.fullName = this.firstName + ' ' + this.lastName
+        }
+          return this.fullName
+
+      },
+      set(newValue) {
+        this.fullName = newValue
+        this.cardHolderNameState = false
+      }
     },
   },
+  watch:{
+    expiry_date(e) {
+      let expiryDateYear = e.split('/')[1]
+      let yearNow = new Date().getFullYear().toString().substr(-2)
+
+      if(expiryDateYear !== undefined && expiryDateYear !== ''){
+        if(expiryDateYear < yearNow && expiryDateYear.length > 1){
+          this.expiry_date = e.replaceAll(`/${expiryDateYear}`, `/${yearNow}`)
+        }
+      }
+
+    }
+  },
+  mounted() {
+    this.dataPrice = data
+    this.imagePath = cards.defaultCard
+  },
   methods: {
+    setPrice(e) {
+      this.price = e
+    },
+    cardChanged(e){
+      this.imagePath = cards.defaultCard
+      switch (e) {
+        case 'amex':
+          this.imagePath = cards.amexCard
+          break;
+        case 'visa':
+          this.imagePath = cards.visaCard
+          break
+        case 'diners':
+          this.imagePath = cards.dinnersCard
+          break;
+        case 'mastercard':
+          this.imagePath = cards.masterCard
+          break;
+        case 'jcb':
+          this.imagePath = cards.jsbCard
+          break;
+        case 'discover':
+          this.imagePath = cards.discoverCard
+          break;
+      }
+    },
+    tooltipHandler(){
+      this.tooltipOpen = !this.tooltipOpen
+    },
+    closeEvent: function () {
+      console.log('close event called', this.tooltipOpen)
+      if(this.tooltipOpen === true){
+        this.tooltipOpen = false
+      }
+    },
+
     submit() {
 
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('error!')
 
-      } else {
+      }
         this.blur = true
 
         setTimeout(() => {
           console.log('submit!')
           this.blur = false
 
-          this.first_name = ''
-          this.last_name = ''
-          this.full_name = ''
+          this.firstName = ''
+          this.lastName = ''
+          this.fullName = ''
           this.email = ''
 
           this.card_number = ''
@@ -264,28 +337,19 @@ export default {
 
           this.$v.$reset()
 
-          let radioInputs = this.$refs.radio.$parent.$children
-          for (let i = 0; i < radioInputs.length-1; i++) {
-            if(i === 2){
-              return false
-            }
-            radioInputs[i].$el.children[0].checked = false
-          }
-
-
         }, 500)
-      }
+
     },
   },
   validations: {
     price: {
       required
     },
-    first_name: {
+    firstName: {
       required,
       minLength: minLength(2)
     },
-    last_name: {
+    lastName: {
       required,
       minLength: minLength(4)
     },
@@ -293,7 +357,7 @@ export default {
       required,
       email
     },
-    full_name: {
+    fullName: {
       required,
     },
     card_number: {
@@ -322,8 +386,24 @@ export default {
           el.dispatchEvent(event)
         }, 100);
       }
+    },
+    clickOutside: {
+      bind: function(el, binding) {
+        console.log(el)
+        const clickOutsideEvent = event => {
+          console.log(event.target)
+          if (!el.contains(event.target) && el !== event.target) {
+            binding.value(event);
+          }
+        };
+        el.__vueClickEventHandler__ = clickOutsideEvent;
+        document.body.addEventListener('click', clickOutsideEvent)
+      },
+      unbind: function(el) {
+        document.body.removeEventListener('click', el.__vueClickEventHandler__)
+      },
     }
-  }
+  },
 
 }
 </script>

@@ -39,11 +39,11 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {}
   },
   methods: {
-    getInputValue(e) {
+    getInputValue (e) {
       this.$emit('input', e.target.value)
     }
   }

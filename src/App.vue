@@ -15,9 +15,9 @@
                 :title="item.title"
                 :value="item.price"
                 :id="item.id"
-                :validationState="$v.price"
+                :validation-state="$v.price"
                 @input="setPrice"
-
+                :picked-price="price"
             />
 
           </div>
@@ -102,25 +102,24 @@
                 :validationState="$v.card_number"
             />
 
-
           </div>
 
           <div class="flex -mx-15">
             <div class="flex flex-col w-1/2 mx-15">
-              <label for="expiry_date" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
+              <label for="expiryDate" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
                 Expiry Date
               </label>
               <div class="relative">
                 <input type="text"
-                       id="expiry_date"
+                       id="expiryDate"
                        class="border rounded-4 text-16 p-11 w-full"
-                       :class=" $v.expiry_date.$error ? 'border-red-700' : 'border-grey-100' "
-                       v-model.trim="expiry_date"
+                       :class=" $v.expiryDate.$error ? 'border-red-700' : 'border-grey-100' "
+                       v-model.trim="expiryDate"
                        v-cleave="{date: true, datePattern: ['m', 'y']}"
                 >
               </div>
               <inputErrorHandler
-                  :validationState="$v.expiry_date"
+                  :validationState="$v.expiryDate"
               />
             </div>
             <div class="flex flex-col w-1/2 mx-15">
@@ -140,7 +139,10 @@
                       src="@/assets/icons/question.svg"
                       alt="card"
                   >
-                <div class="absolute cursor-pointer w-full h-full"  @click="tooltipHandler" v-clickOutside="closeEvent">
+                <div
+                    class="absolute cursor-pointer w-full h-full"
+                     @click="tooltipHandler"
+                     v-clickOutside="closeEvent">
                   <TooltipComponent
                     :openState="tooltipOpen"
                   >
@@ -209,11 +211,10 @@ import InputComponent from './components/input-component.vue'
 import InputErrorHandler from './components/input-error-handler.vue'
 import InputRadioComponent from './components/input-radio-component.vue'
 import TooltipComponent from './components/tooltip-component.vue'
-import Cleave from 'cleave.js';
+import Cleave from 'cleave.js'
 import data from './data/plans.json'
 import cards from '@/assets/icons'
-
-import {required, minLength, email} from 'vuelidate/lib/validators'
+import { required, minLength, email } from 'vuelidate/lib/validators'
 
 export default {
   name: 'App',
@@ -223,7 +224,7 @@ export default {
     InputRadioComponent,
     TooltipComponent
   },
-  data() {
+  data () {
     return {
       price: '',
       firstName: '',
@@ -232,96 +233,93 @@ export default {
       email: '',
       checkbox: null,
       card_number: '',
-      expiry_date: '',
+      expiryDate: '',
       cvc: '',
       blur: false,
       dataPrice: [],
       cardHolderNameState: true,
       imagePath: '',
-      tooltipOpen: false
+      tooltipOpen: false,
+      picked: false
     }
   },
   computed: {
     Fullname: {
-      get() {
-        if(this.cardHolderNameState === true){
-          return this.fullName = this.firstName + ' ' + this.lastName
+      get () {
+        if (this.cardHolderNameState === true) {
+          return this.firstName + ' ' + this.lastName
         }
-          return this.fullName
-
+        return this.fullName
       },
-      set(newValue) {
+      set (newValue) {
         this.fullName = newValue
         this.cardHolderNameState = false
       }
-    },
-  },
-  watch:{
-    expiry_date(e) {
-      let expiryDateYear = e.split('/')[1]
-      let yearNow = new Date().getFullYear().toString().substr(-2)
-
-      if(expiryDateYear !== undefined && expiryDateYear !== ''){
-        if(expiryDateYear < yearNow && expiryDateYear.length > 1){
-          this.expiry_date = e.replaceAll(`/${expiryDateYear}`, `/${yearNow}`)
-        }
-      }
-
     }
   },
-  mounted() {
+  watch: {
+    expiryDate (string) {
+      const expiryDateYear = string.split('/')[1]
+      const yearNow = new Date().getFullYear().toString().substr(-2)
+
+      if (expiryDateYear !== undefined && expiryDateYear !== '') {
+        if (expiryDateYear < yearNow && expiryDateYear.length > 1) {
+          this.expiryDate = string.replaceAll(`/${expiryDateYear}`, `/${yearNow}`)
+        }
+      }
+    }
+  },
+  mounted () {
     this.dataPrice = data
     this.imagePath = cards.defaultCard
   },
   methods: {
-    setPrice(e) {
-      this.price = e
+    setPrice (price = null) {
+      this.price = price
     },
-    cardChanged(e){
+    cardChanged (e) {
       this.imagePath = cards.defaultCard
       switch (e) {
         case 'amex':
           this.imagePath = cards.amexCard
-          break;
+          break
         case 'visa':
           this.imagePath = cards.visaCard
           break
         case 'diners':
           this.imagePath = cards.dinnersCard
-          break;
+          break
         case 'mastercard':
           this.imagePath = cards.masterCard
-          break;
+          break
         case 'jcb':
           this.imagePath = cards.jsbCard
-          break;
+          break
         case 'discover':
           this.imagePath = cards.discoverCard
-          break;
+          break
       }
     },
-    tooltipHandler(){
+    tooltipHandler () {
       this.tooltipOpen = !this.tooltipOpen
     },
-    closeEvent: function () {
-      console.log('close event called', this.tooltipOpen)
-      if(this.tooltipOpen === true){
+    closeEvent () {
+      if (this.tooltipOpen === true) {
         this.tooltipOpen = false
       }
     },
 
-    submit() {
-
+    submit () {
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('error!')
-
-      }
+      }else {
         this.blur = true
 
         setTimeout(() => {
           console.log('submit!')
           this.blur = false
+          this.picked = false
 
           this.firstName = ''
           this.lastName = ''
@@ -329,17 +327,16 @@ export default {
           this.email = ''
 
           this.card_number = ''
-          this.expiry_date = ''
+          this.expiryDate = ''
           this.cvc = ''
 
           this.checkbox = null
           this.price = ''
 
           this.$v.$reset()
-
         }, 500)
-
-    },
+      }
+    }
   },
   validations: {
     price: {
@@ -358,15 +355,15 @@ export default {
       email
     },
     fullName: {
-      required,
+      required
     },
     card_number: {
-      required,
+      required
     },
     checkbox: {
       required: value => value === true
     },
-    expiry_date: {
+    expiryDate: {
       required
     },
     cvc: {
@@ -380,30 +377,28 @@ export default {
         el.cleave = new Cleave(el, binding.value || {})
       },
       update: (el) => {
-        const event = new Event('input', {bubbles: true});
+        const event = new Event('input', { bubbles: true })
         setTimeout(function () {
           el.value = el.cleave.properties.result
           el.dispatchEvent(event)
-        }, 100);
+        }, 100)
       }
     },
     clickOutside: {
-      bind: function(el, binding) {
-        console.log(el)
+      bind: function (el, binding) {
         const clickOutsideEvent = event => {
-          console.log(event.target)
           if (!el.contains(event.target) && el !== event.target) {
-            binding.value(event);
+            binding.value(event)
           }
-        };
-        el.__vueClickEventHandler__ = clickOutsideEvent;
+        }
+        el.__vueClickEventHandler__ = clickOutsideEvent
         document.body.addEventListener('click', clickOutsideEvent)
       },
-      unbind: function(el) {
+      unbind: function (el) {
         document.body.removeEventListener('click', el.__vueClickEventHandler__)
-      },
+      }
     }
-  },
+  }
 
 }
 </script>
@@ -413,10 +408,10 @@ html {
   font-size: 10px;
 }
 
-input[type="radio"]:checked + span {
-  background: #ECFDF5;
-  border: 1px solid #6EE7B7;
-}
+//input[type="radio"]:checked + span {
+//  background: #ECFDF5;
+//  border: 1px solid #6EE7B7;
+//}
 
 .blur {
   filter: blur(3px);
@@ -428,6 +423,5 @@ input[type="radio"]:checked + span {
     box-shadow: inherit !important;
   }
 }
-
 
 </style>

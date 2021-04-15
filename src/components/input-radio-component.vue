@@ -9,11 +9,10 @@
         class="absolute opacity-0 h-0 w-0"
         :value="value"
         @input="getInputValue"
-        :class="{'blur': checkedState}"
     >
     <span
         class="text-24 font-bold block border rounded-5 py-10 px-12 transition duration-200 ease-in-out"
-        :class="[ ( validationState.$dirty && !validationState.required ) ? 'border-red-700 bg-red-50' :  '', checkedState ? 'bg-green-200 border-green-300' : 'border-grey-200']"
+        :class="[{'bg-green-200 border-green-300': checkedState}, {'border-grey-200': !checkedState}]"
     >
               {{ title }}
             </span>
@@ -22,10 +21,11 @@
 
 <script>
 export default {
-  name: 'Input-radio-component',
+  name: 'input-radio-component',
   data () {
     return {
-      checkedState: null
+      checkedState: null,
+      updatePickedPrice: null
     }
   },
   props: {
@@ -37,7 +37,7 @@ export default {
       required: true
     },
     value: {
-      type: String,
+      type: Number,
       required: true
     },
     id: {
@@ -55,11 +55,15 @@ export default {
     }
   },
   watch: {
-    pickedPrice (price) {
-      this.checkedState = false
-      if(this.value === price) {
-        this.checkedState = !this.checkedState
-      }
+    pickedPrice: {
+      handler(newPrice) {
+        this.checkedState = false
+        this.updatePickedPrice = parseFloat(newPrice)
+        if(this.value === this.updatePickedPrice) {
+          this.checkedState = !this.checkedState
+        }
+      },
+      immediate: true
     }
   }
 }

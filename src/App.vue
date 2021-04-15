@@ -24,14 +24,13 @@
           <inputErrorHandler
               :validationState="$v.price"
           />
-
           <div class="font-bold text-18 mt-10">
             Customer Information
           </div>
 
           <inputComponent
               name="First name"
-              id="first_name"
+              id="firstName"
               v-model.trim="firstName"
               :validationState="$v.firstName"
           />
@@ -72,8 +71,9 @@
                   type="text"
                   id="card_name"
                   class="border rounded-4 text-16 p-11 w-full"
-                  v-model="Fullname"
-                  :class=" $v.fullName.$error ? 'border-red-700' :  'border-grey-100' "
+                  v-model.trim="getFullName"
+                  :class="$v.fullName.$error ? 'border-red-700' :  'border-grey-100'"
+                  @keypress="isNumber($event)"
               >
             </div>
             <inputErrorHandler
@@ -81,25 +81,25 @@
             />
           </div>
           <div class="flex flex-col">
-            <label for="card_number" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
+            <label for="cardNumber" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
               Card number
             </label>
             <div class="relative">
               <input
                   type="text"
-                  name="card_number"
-                  id="card_number"
+                  name="cardNumber"
+                  id="cardNumber"
                   class="border rounded-4 text-16 p-11 w-full "
-                  :class=" $v.card_number.$error ? 'border-red-700' : 'border-grey-100' "
-                  v-model="card_number"
-                  v-cleave="{creditCard: true,  autoMask: true, onCreditCardTypeChanged : cardChanged}"
+                  :class=" $v.cardNumber.$error ? 'border-red-700' : 'border-grey-100' "
+                  v-model="cardNumber"
+                  v-cleave="{creditCard: true, creditCardStrictMode: true, onCreditCardTypeChanged : cardChanged}"
               />
               <div class="absolute right-14 top-0 bottom-0 flex">
                 <img :src="imagePath" alt="card">
               </div>
             </div>
             <inputErrorHandler
-                :validationState="$v.card_number"
+                :validationState="$v.cardNumber"
             />
 
           </div>
@@ -141,7 +141,7 @@
                   >
                 <div
                     class="absolute cursor-pointer w-full h-full"
-                     @click="tooltipHandler"
+                     @click.self="tooltipHandler"
                      v-clickOutside="closeEvent">
                   <TooltipComponent
                     :openState="tooltipOpen"
@@ -214,7 +214,12 @@ import TooltipComponent from './components/tooltip-component.vue'
 import Cleave from 'cleave.js'
 import data from './data/plans.json'
 import cards from '@/assets/icons'
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import { required, minLength, email, helpers } from 'vuelidate/lib/validators'
+
+const maxWordsLength = (param) => helpers.withParams(
+  { type: 'maxWordsLength', max: param },
+  (value) => value.split(' ').length <= param
+)
 
 export default {
   name: 'App',
@@ -232,23 +237,19 @@ export default {
       fullName: '',
       email: '',
       checkbox: null,
-      card_number: '',
+      cardNumber: '',
       expiryDate: '',
       cvc: '',
       blur: false,
       dataPrice: [],
       cardHolderNameState: true,
       imagePath: '',
-      tooltipOpen: false,
-      picked: false
+      tooltipOpen: false
     }
   },
   computed: {
-    Fullname: {
+    getFullName: {
       get () {
-        if (this.cardHolderNameState === true) {
-          return this.firstName + ' ' + this.lastName
-        }
         return this.fullName
       },
       set (newValue) {
@@ -259,46 +260,42 @@ export default {
   },
   watch: {
     expiryDate (string) {
+      const expiryDateMonth = string.split('/')[0]
+      const monthNow = (new Date().getMonth() + 1).toString().padStart(2, '0')
+      if (expiryDateMonth < monthNow && expiryDateMonth.length > 1) {
+        this.expiryDate = string.replaceAll(`${expiryDateMonth}/`, `${monthNow}/`)
+      }
+
       const expiryDateYear = string.split('/')[1]
       const yearNow = new Date().getFullYear().toString().substr(-2)
-
       if (expiryDateYear !== undefined && expiryDateYear !== '') {
         if (expiryDateYear < yearNow && expiryDateYear.length > 1) {
           this.expiryDate = string.replaceAll(`/${expiryDateYear}`, `/${yearNow}`)
         }
+      }
+    },
+    firstName (value) {
+      if (this.cardHolderNameState === true) {
+        this.fullName = value + ' ' + this.lastName
+      }
+    },
+    lastName (value) {
+      if (this.cardHolderNameState === true) {
+        this.fullName = this.firstName + ' ' + value
       }
     }
   },
   mounted () {
     this.dataPrice = data
     this.imagePath = cards.defaultCard
+    this.price = this.dataPrice.reduce((element, max) => element > max.price ? element : max.price, 0)
   },
   methods: {
     setPrice (price = null) {
       this.price = price
     },
     cardChanged (e) {
-      this.imagePath = cards.defaultCard
-      switch (e) {
-        case 'amex':
-          this.imagePath = cards.amexCard
-          break
-        case 'visa':
-          this.imagePath = cards.visaCard
-          break
-        case 'diners':
-          this.imagePath = cards.dinnersCard
-          break
-        case 'mastercard':
-          this.imagePath = cards.masterCard
-          break
-        case 'jcb':
-          this.imagePath = cards.jsbCard
-          break
-        case 'discover':
-          this.imagePath = cards.discoverCard
-          break
-      }
+      this.imagePath = cards[`${e}Card`] || cards.defaultCard
     },
     tooltipHandler () {
       this.tooltipOpen = !this.tooltipOpen
@@ -306,6 +303,15 @@ export default {
     closeEvent () {
       if (this.tooltipOpen === true) {
         this.tooltipOpen = false
+      }
+    },
+    isNumber (evt) {
+      evt = (evt) || window.event
+      const charCode = (evt.which) ? evt.which : evt.keyCode
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        return true
+      } else {
+        evt.preventDefault()
       }
     },
 
@@ -319,14 +325,13 @@ export default {
         setTimeout(() => {
           console.log('submit!')
           this.blur = false
-          this.picked = false
 
           this.firstName = ''
           this.lastName = ''
           this.fullName = ''
           this.email = ''
 
-          this.card_number = ''
+          this.cardNumber = ''
           this.expiryDate = ''
           this.cvc = ''
 
@@ -355,9 +360,10 @@ export default {
       email
     },
     fullName: {
-      required
+      required,
+      maxWordsLength: maxWordsLength(3)
     },
-    card_number: {
+    cardNumber: {
       required
     },
     checkbox: {
@@ -409,7 +415,7 @@ html {
 }
 
 //input[type="radio"]:checked + span {
-//  background: #ECFDF5;
+//  background: #ffef71;
 //  border: 1px solid #6EE7B7;
 //}
 

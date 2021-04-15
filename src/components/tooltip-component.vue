@@ -1,7 +1,7 @@
 <template>
   <div
       v-if="openState"
-      class="absolute p-5 w-160 bg-orange-50 bottom-full right-0 text-16 leading-18">
+      class="absolute p-5 w-160 bg-orange-50 bottom-full right-0 text-16 leading-18 cursor-auto">
     <slot></slot>
   </div>
 </template>

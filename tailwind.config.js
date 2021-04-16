@@ -7,6 +7,7 @@ module.exports = {
       colors: {
         'orange-50': '#faebd7',
         'red-50': '#ffcfcf',
+        'blue-50': '#a3c8ff7a',
         'blue-100': '#EDF5FF',
         'blue-150': '#A3C8FF',
         'grey-100': '#D0D0D0',
@@ -51,14 +52,16 @@ module.exports = {
       2: '0.2rem',
       4: '0.4rem',
       5: '0.5rem',
-      7: '0.7rem'
+      7: '0.7rem',
+      8: '0.8rem'
     },
     maxWidth: {
       '1/4': '25%',
       '1/2': '50%',
       '3/4': '75%',
       lg: '1024px',
-      38: '38rem'
+      38: '38rem',
+      '6xl': '72rem'
     }
   },
   plugins: [

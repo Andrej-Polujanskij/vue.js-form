@@ -1,7 +1,9 @@
 <template>
   <div v-if="validationState.$dirty">
-    <div v-if="!validationState.required">
+    <div
+      v-if="!validationState.required"
       class="text-red-700 text-14 ml-4"
+    >
       Field is required
     </div>
 

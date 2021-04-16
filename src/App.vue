@@ -1,5 +1,12 @@
 <template>
   <div class="bg-grey-300 py-16">
+    <transition name="modal-window">
+      <ModalWindowComponent
+        v-if="paymentDone"
+        :payment-info="paymentInfo"
+        @close="paymentDone = false"
+      />
+    </transition>
     <div
       id="app"
       class=" max-w-lg mx-auto bg-white px-8"
@@ -240,6 +247,7 @@ import InputComponent from './components/InputComponent.vue'
 import InputErrorHandler from './components/InputErrorHandler.vue'
 import InputRadioComponent from './components/InputRadioComponent.vue'
 import TooltipComponent from './components/TooltipComponent.vue'
+import ModalWindowComponent from './components/ModalWindowComponent.vue'
 import Cleave from 'cleave.js'
 import data from './data/plans.json'
 import cards from '@/assets/icons'
@@ -256,7 +264,8 @@ export default {
     InputComponent,
     InputErrorHandler,
     InputRadioComponent,
-    TooltipComponent
+    TooltipComponent,
+    ModalWindowComponent
   },
   data () {
     return {
@@ -273,7 +282,9 @@ export default {
       dataPrice: [],
       cardHolderNameState: true,
       imagePath: '',
-      tooltipOpen: false
+      tooltipOpen: false,
+      paymentDone: false,
+      paymentInfo: {}
     }
   },
   computed: {
@@ -350,9 +361,11 @@ export default {
         console.log('error!')
       } else {
         this.blur = true
-
+        console.log(this.price)
         setTimeout(() => {
           console.log('submit!')
+          this.paymentDone = true
+          this.paymentInfo.price = this.price
           this.blur = false
 
           this.firstName = ''
@@ -457,6 +470,19 @@ html {
   :focus {
     border-color: inherit !important;
     box-shadow: inherit !important;
+  }
+}
+.modal-window-container{
+  transition: .3s ease-in-out;
+}
+.modal-window-enter, .modal-window-leave-to{
+  opacity: 0;
+}
+.modal-window-enter-active, .modal-window-leave-to {
+  transition: all .5s ease-in-out;
+  .modal-window-container{
+    opacity: 0;
+    transform: translate(-50%, -100%);
   }
 }
 

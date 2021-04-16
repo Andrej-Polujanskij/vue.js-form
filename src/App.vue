@@ -1,61 +1,61 @@
 <template>
   <div class="bg-grey-300 py-16">
-    <div id="app" class=" max-w-lg mx-auto bg-white px-8">
-
+    <div
+      id="app"
+      class=" max-w-lg mx-auto bg-white px-8"
+    >
       <div class="max-w-38 py-24 mx-auto">
         <form
-            @submit.prevent="submit"
-            :class="{'blur': blur}"
+          :class="{'blur': blur}"
+          @submit.prevent="submit"
         >
           <div class="flex justify-between ">
-
-            <inputRadioComponent
-                v-for="item in dataPrice"
-                :key="item.id"
-                :title="item.title"
-                :value="item.price"
-                :id="item.id"
-                :validation-state="$v.price"
-                @input="setPrice"
-                :picked-price="price"
-            />
-
-          </div>
-          <inputErrorHandler
+            <InputRadioComponent
+              v-for="item in dataPrice"
+              :id="item.id"
+              :key="item.id"
+              :title="item.title"
+              :value="item.price"
               :validation-state="$v.price"
+              :picked-price="price"
+              @input="setPrice"
+            />
+          </div>
+          <InputErrorHandler
+            :validation-state="$v.price"
           />
           <div class="font-bold text-18 mt-10">
             Customer Information
           </div>
 
-          <inputComponent
-              name="First name"
-              id="firstName"
-              v-model.trim="firstName"
-              :validation-state="$v.firstName"
+          <InputComponent
+            id="firstName"
+            v-model.trim="firstName"
+            name="First name"
+            :validation-state="$v.firstName"
           />
-          <inputErrorHandler
-              :validation-state="$v.firstName"
-          />
-
-          <inputComponent
-              name="Last name"
-              id="lastName"
-              v-model.trim="lastName"
-              :validation-state="$v.lastName"
-          />
-          <inputErrorHandler
-              :validation-state="$v.lastName"
+          <InputErrorHandler
+            :validation-state="$v.firstName"
           />
 
-          <inputComponent
-              name="Email address"
-              id="email"
-              v-model.trim="email"
-              :validation-state="$v.email"
+          <InputComponent
+            id="lastName"
+            v-model.trim="lastName"
+            name="Last name"
+            :validation-state="$v.lastName"
           />
-          <inputErrorHandler
-              :validation-state="$v.email"
+          <InputErrorHandler
+            :validation-state="$v.lastName"
+          />
+
+          <InputComponent
+            id="email"
+            v-model.trim="email"
+            name="Email address"
+            :validation-state="$v.email"
+          />
+          <InputErrorHandler
+            :validation-state="$v.email"
           />
 
           <div class="font-bold text-18 mt-50">
@@ -63,105 +63,129 @@
           </div>
 
           <div class="flex flex-col">
-            <label for="card_name" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
+            <label
+              for="card_name"
+              class="text-15 leading-28 text-grey-500 mt-4 ml-4"
+            >
               Card Holder Name
             </label>
             <div class="relative">
               <input
-                  type="text"
-                  id="card_name"
-                  class="border rounded-4 text-16 p-11 w-full"
-                  v-model.trim="getFullName"
-                  :class="$v.fullName.$error ? 'border-red-700' :  'border-grey-100'"
-                  @keypress="isNumber($event)"
+                id="card_name"
+                v-model.trim="getFullName"
+                type="text"
+                class="border rounded-4 text-16 p-11 w-full"
+                :class="$v.fullName.$error ? 'border-red-700' : 'border-grey-100'"
+                @keypress="isNumber($event)"
               >
             </div>
-            <inputErrorHandler
-                :validation-state="$v.fullName"
+            <InputErrorHandler
+              :validation-state="$v.fullName"
             />
           </div>
           <div class="flex flex-col">
-            <label for="cardNumber" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
+            <label
+              for="cardNumber"
+              class="text-15 leading-28 text-grey-500 mt-4 ml-4"
+            >
               Card number
             </label>
             <div class="relative">
               <input
-                  type="text"
-                  name="cardNumber"
-                  id="cardNumber"
-                  class="border rounded-4 text-16 p-11 w-full "
-                  :class=" $v.cardNumber.$error ? 'border-red-700' : 'border-grey-100' "
-                  v-model.number="cardNumber"
-                  v-cleave="{creditCard: true, creditCardStrictMode: true, onCreditCardTypeChanged : cardChanged}"
-              />
+                id="cardNumber"
+                v-model.number="cardNumber"
+                v-cleave="{creditCard: true, creditCardStrictMode: true, onCreditCardTypeChanged : cardChanged}"
+                type="text"
+                name="cardNumber"
+                class="border rounded-4 text-16 p-11 w-full "
+                :class=" $v.cardNumber.$error ? 'border-red-700' : 'border-grey-100' "
+              >
               <div class="absolute right-14 top-0 bottom-0 flex">
-                <img :src="imagePath" alt="card">
+                <img
+                  :src="imagePath"
+                  alt="card"
+                >
               </div>
             </div>
-            <inputErrorHandler
-                :validation-state="$v.cardNumber"
+            <InputErrorHandler
+              :validation-state="$v.cardNumber"
             />
-
           </div>
 
           <div class="flex -mx-15">
             <div class="flex flex-col w-1/2 mx-15">
-              <label for="expiryDate" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
+              <label
+                for="expiryDate"
+                class="text-15 leading-28 text-grey-500 mt-4 ml-4"
+              >
                 Expiry Date
               </label>
               <div class="relative">
-                <input type="text"
-                       id="expiryDate"
-                       class="border rounded-4 text-16 p-11 w-full"
-                       :class=" $v.expiryDate.$error ? 'border-red-700' : 'border-grey-100' "
-                       v-model.trim="expiryDate"
-                       v-cleave="{date: true, datePattern: ['m', 'y']}"
+                <input
+                  id="expiryDate"
+                  v-model.trim="expiryDate"
+                  v-cleave="{date: true, datePattern: ['m', 'y']}"
+                  type="text"
+                  class="border rounded-4 text-16 p-11 w-full"
+                  :class=" $v.expiryDate.$error ? 'border-red-700' : 'border-grey-100' "
                 >
               </div>
-              <inputErrorHandler
-                  :validation-state="$v.expiryDate"
+              <InputErrorHandler
+                :validation-state="$v.expiryDate"
               />
             </div>
             <div class="flex flex-col w-1/2 mx-15">
-              <label for="cvc" class="text-15 leading-28 text-grey-500 mt-4 ml-4">
+              <label
+                for="cvc"
+                class="text-15 leading-28 text-grey-500 mt-4 ml-4"
+              >
                 CVV/CVC
               </label>
               <div class="relative">
-                <input type="text"
-                       id="cvc"
-                       class="border rounded-4 text-16 p-11 w-full"
-                       :class=" $v.cvc.$error ? 'border-red-700' : 'border-grey-100' "
-                       v-model.number="cvc"
-                       v-cleave="{numeral: true, numeralPositiveOnly: true, numeralIntegerScale: 6}"
+                <input
+                  id="cvc"
+                  v-model.number="cvc"
+                  v-cleave="{numeral: true, numeralPositiveOnly: true, numeralIntegerScale: 6}"
+                  type="text"
+                  class="border rounded-4 text-16 p-11 w-full"
+                  :class=" $v.cvc.$error ? 'border-red-700' : 'border-grey-100' "
                 >
                 <div class="absolute right-14 top-0 bottom-0 flex">
                   <img
-                      src="@/assets/icons/question.svg"
-                      alt="card"
+                    src="@/assets/icons/question.svg"
+                    alt="card"
                   >
-                <div
+                  <div
+                    v-click-outside="closeEvent"
                     class="absolute cursor-pointer w-full h-full"
-                     @click.self="tooltipHandler"
-                     v-click-outside="closeEvent">
-                  <tooltip-component
-                    :open-state="tooltipOpen"
+                    @click.self="tooltipHandler"
                   >
-                    <p>The <span class="font-bold">3 (or 4)</span> digits on the back of your credit card</p>
-                    <img class="pt-5" src="@/assets/images/CVV.jpg" alt="">
-                  </tooltip-component>
-                </div>
-
+                    <TooltipComponent
+                      :open-state="tooltipOpen"
+                    >
+                      <p>The <span class="font-bold">3 (or 4)</span> digits on the back of your credit card</p>
+                      <img
+                        class="pt-5"
+                        src="@/assets/images/CVV.jpg"
+                        alt=""
+                      >
+                    </TooltipComponent>
+                  </div>
                 </div>
               </div>
-              <inputErrorHandler
-                  :validation-state="$v.cvc"
+              <InputErrorHandler
+                :validation-state="$v.cvc"
               />
             </div>
           </div>
 
           <div class="flex justify-between mt-6">
-            <div class="font-bold text-22">Total</div>
-            <div class="font-bold text-22">USD ${{ price }}</div>
+            <div class="font-bold text-22">
+              Total
+            </div>
+            <div class="font-bold text-22">
+              USD ${{ price }}
+            </div>
           </div>
 
           <div class="text-14 leading-19 my-15">
@@ -169,20 +193,23 @@
           </div>
 
           <div
-              class="px-15 py-8 bg-blue-100 border  rounded-2 flex items-baseline"
-              :class=" $v.checkbox.$error ? 'border-red-700' :  'border-blue-150' "
+            class="px-15 py-8 bg-blue-100 border  rounded-2 flex items-baseline"
+            :class=" $v.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
           >
             <div class="mr-15">
               <input
-                  class="p-7 rounded-2"
-                  type="checkbox"
-                  v-model="checkbox"
-                  :class=" $v.checkbox.$error ? 'border-red-700' :  'border-blue-150' "
+                v-model="checkbox"
+                class="p-7 rounded-2"
+                type="checkbox"
+                :class=" $v.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
               >
             </div>
             <div class="text-16 leading-22">
               Click the checkbox to agree to the
-              <a class="font-semibold underline md:hover:no-underline" href="#">
+              <a
+                class="font-semibold underline md:hover:no-underline"
+                href="#"
+              >
                 Terms and Conditions
               </a>.
             </div>
@@ -190,16 +217,18 @@
 
           <div class="mt-20">
             <button
-                type="submit"
-                class="rounded-7 text-white py-18 text-24 font-bold flex justify-center w-full items-center bg-gradient-to-r from-green-350 to-green-400"
+              type="submit"
+              class="rounded-7 text-white py-18 text-24 font-bold flex justify-center w-full items-center bg-gradient-to-r from-green-350 to-green-400"
             >
               BUY NOW
               <span class="flex ml-15">
-                <img src="@/assets/icons/arrow.svg" alt="">
+                <img
+                  src="@/assets/icons/arrow.svg"
+                  alt=""
+                >
               </span>
             </button>
           </div>
-
         </form>
       </div>
     </div>
@@ -319,7 +348,7 @@ export default {
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('error!')
-      }else {
+      } else {
         this.blur = true
 
         setTimeout(() => {
@@ -377,6 +406,7 @@ export default {
       minLength: minLength(3)
     }
   },
+  // eslint-disable-next-line vue/order-in-components
   directives: {
     cleave: {
       inserted: (el, binding) => {

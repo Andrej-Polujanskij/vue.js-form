@@ -1,26 +1,34 @@
 <template>
-  <div class="" v-if="validationState.$dirty">
-
-    <div class="text-red-700 text-14 ml-4" v-if="!validationState.required">Field is
-      required
+  <div v-if="validationState.$dirty">
+    <div v-if="!validationState.required">
+      class="text-red-700 text-14 ml-4"
+      Field is required
     </div>
 
-    <div class="" v-if="validationState.$params.minLength">
-      <div class="text-red-700 text-14 ml-4" v-if="!validationState.minLength">Field must have at least
+    <div v-if="validationState.$params.minLength">
+      <div
+        v-if="!validationState.minLength"
+        class="text-red-700 text-14 ml-4"
+      >
+        Field must have at least
         {{ validationState.$params.minLength.min }} letters.
       </div>
     </div>
 
-    <div class="" v-if="validationState.$params.email">
-      <div class="text-red-700 text-14 ml-4"
-           v-if="!validationState.email">
+    <div v-if="validationState.$params.email">
+      <div
+        v-if="!validationState.email"
+        class="text-red-700 text-14 ml-4"
+      >
         Fill in a valid email
       </div>
     </div>
 
-    <div class="" v-if="validationState.$params.maxWordsLength">
-      <div class="text-red-700 text-14 ml-4"
-           v-if="!validationState.maxWordsLength">
+    <div v-if="validationState.$params.maxWordsLength">
+      <div
+        v-if="!validationState.maxWordsLength"
+        class="text-red-700 text-14 ml-4"
+      >
         Max {{ validationState.$params.maxWordsLength.max }} words in full name
       </div>
     </div>

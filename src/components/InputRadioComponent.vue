@@ -12,7 +12,7 @@
     >
     <span
         class="text-24 font-bold block border rounded-5 py-10 px-12 transition duration-200 ease-in-out"
-        :class="[{'bg-green-200 border-green-300': checkedState}, {'border-grey-200': !checkedState}]"
+        :class="[ { 'bg-green-200 border-green-300': checkedState }, { 'border-grey-200': !checkedState } ]"
     >
               {{ title }}
             </span>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'input-radio-component',
+  name: 'InputRadioComponent',
   data () {
     return {
       checkedState: null,

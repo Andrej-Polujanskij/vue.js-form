@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'tooltip-component',
+  name: 'TooltipComponent',
   props: {
     openState: {
       type: Boolean,

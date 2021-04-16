@@ -21,7 +21,7 @@
     <div class="" v-if="validationState.$params.maxWordsLength">
       <div class="text-red-700 text-14 ml-4"
            v-if="!validationState.maxWordsLength">
-        Max {{validationState.$params.maxWordsLength.max}} words in full name
+        Max {{ validationState.$params.maxWordsLength.max }} words in full name
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: 'input-Error-Handler',
+  name: 'InputErrorHandler',
   props: {
     validationState: {
       type: Object,

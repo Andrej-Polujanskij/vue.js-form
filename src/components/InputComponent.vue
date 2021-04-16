@@ -11,7 +11,7 @@
           :id="id"
           class="border rounded-4 text-16 p-11 w-full"
           @input="getInputValue"
-          :class="validationState.$error ? 'border-red-700' : 'border-grey-100'"
+          :class=" validationState.$error ? 'border-red-700' : 'border-grey-100' "
           :value="value"
           @keypress="isNumber($event)"
       >
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'input-Component',
+  name: 'InputComponent',
   props: {
     name: {
       type: String,

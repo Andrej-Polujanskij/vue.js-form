@@ -22,7 +22,7 @@
 
           </div>
           <inputErrorHandler
-              :validationState="$v.price"
+              :validation-state="$v.price"
           />
           <div class="font-bold text-18 mt-10">
             Customer Information
@@ -32,30 +32,30 @@
               name="First name"
               id="firstName"
               v-model.trim="firstName"
-              :validationState="$v.firstName"
+              :validation-state="$v.firstName"
           />
           <inputErrorHandler
-              :validationState="$v.firstName"
+              :validation-state="$v.firstName"
           />
 
           <inputComponent
               name="Last name"
               id="lastName"
               v-model.trim="lastName"
-              :validationState="$v.lastName"
+              :validation-state="$v.lastName"
           />
           <inputErrorHandler
-              :validationState="$v.lastName"
+              :validation-state="$v.lastName"
           />
 
           <inputComponent
               name="Email address"
               id="email"
               v-model.trim="email"
-              :validationState="$v.email"
+              :validation-state="$v.email"
           />
           <inputErrorHandler
-              :validationState="$v.email"
+              :validation-state="$v.email"
           />
 
           <div class="font-bold text-18 mt-50">
@@ -77,7 +77,7 @@
               >
             </div>
             <inputErrorHandler
-                :validationState="$v.fullName"
+                :validation-state="$v.fullName"
             />
           </div>
           <div class="flex flex-col">
@@ -91,7 +91,7 @@
                   id="cardNumber"
                   class="border rounded-4 text-16 p-11 w-full "
                   :class=" $v.cardNumber.$error ? 'border-red-700' : 'border-grey-100' "
-                  v-model="cardNumber"
+                  v-model.number="cardNumber"
                   v-cleave="{creditCard: true, creditCardStrictMode: true, onCreditCardTypeChanged : cardChanged}"
               />
               <div class="absolute right-14 top-0 bottom-0 flex">
@@ -99,7 +99,7 @@
               </div>
             </div>
             <inputErrorHandler
-                :validationState="$v.cardNumber"
+                :validation-state="$v.cardNumber"
             />
 
           </div>
@@ -119,7 +119,7 @@
                 >
               </div>
               <inputErrorHandler
-                  :validationState="$v.expiryDate"
+                  :validation-state="$v.expiryDate"
               />
             </div>
             <div class="flex flex-col w-1/2 mx-15">
@@ -131,7 +131,7 @@
                        id="cvc"
                        class="border rounded-4 text-16 p-11 w-full"
                        :class=" $v.cvc.$error ? 'border-red-700' : 'border-grey-100' "
-                       v-model.trim="cvc"
+                       v-model.number="cvc"
                        v-cleave="{numeral: true, numeralPositiveOnly: true, numeralIntegerScale: 6}"
                 >
                 <div class="absolute right-14 top-0 bottom-0 flex">
@@ -142,19 +142,19 @@
                 <div
                     class="absolute cursor-pointer w-full h-full"
                      @click.self="tooltipHandler"
-                     v-clickOutside="closeEvent">
-                  <TooltipComponent
-                    :openState="tooltipOpen"
+                     v-click-outside="closeEvent">
+                  <tooltip-component
+                    :open-state="tooltipOpen"
                   >
                     <p>The <span class="font-bold">3 (or 4)</span> digits on the back of your credit card</p>
                     <img class="pt-5" src="@/assets/images/CVV.jpg" alt="">
-                  </TooltipComponent>
+                  </tooltip-component>
                 </div>
 
                 </div>
               </div>
               <inputErrorHandler
-                  :validationState="$v.cvc"
+                  :validation-state="$v.cvc"
               />
             </div>
           </div>
@@ -191,7 +191,7 @@
           <div class="mt-20">
             <button
                 type="submit"
-                class="rounded-7 text-white py-18 text-24 font-bold flex justify-center w-full  items-center bg-gradient-to-r from-green-350 to-green-400"
+                class="rounded-7 text-white py-18 text-24 font-bold flex justify-center w-full items-center bg-gradient-to-r from-green-350 to-green-400"
             >
               BUY NOW
               <span class="flex ml-15">
@@ -207,10 +207,10 @@
 </template>
 
 <script>
-import InputComponent from './components/input-component.vue'
-import InputErrorHandler from './components/input-error-handler.vue'
-import InputRadioComponent from './components/input-radio-component.vue'
-import TooltipComponent from './components/tooltip-component.vue'
+import InputComponent from './components/InputComponent.vue'
+import InputErrorHandler from './components/InputErrorHandler.vue'
+import InputRadioComponent from './components/InputRadioComponent.vue'
+import TooltipComponent from './components/TooltipComponent.vue'
 import Cleave from 'cleave.js'
 import data from './data/plans.json'
 import cards from '@/assets/icons'

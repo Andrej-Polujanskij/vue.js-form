@@ -258,6 +258,17 @@ const maxWordsLength = (param) => helpers.withParams(
   (value) => value.split(' ').length <= param
 )
 
+const date = new Date()
+const dateNow = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+const validExpiryDate = () => helpers.withParams(
+  { type: 'validExpiryDate', min: dateNow },
+  (value) => {
+    const expDate = new Date(20 + value.split('/')[1], value.split('/')[0] - 1, date.getDate())
+    return !(value !== '' && expDate <= dateNow)
+  }
+)
+
 export default {
   name: 'App',
   components: {
@@ -295,33 +306,6 @@ export default {
       set (newValue) {
         this.fullName = newValue
         this.cardHolderNameState = false
-      }
-    }
-  },
-  watch: {
-    expiryDate (string) {
-      const expiryDateMonth = string.split('/')[0]
-      const monthNow = (new Date().getMonth() + 1).toString().padStart(2, '0')
-      if (expiryDateMonth < monthNow && expiryDateMonth.length > 1) {
-        this.expiryDate = string.replaceAll(`${expiryDateMonth}/`, `${monthNow}/`)
-      }
-
-      const expiryDateYear = string.split('/')[1]
-      const yearNow = new Date().getFullYear().toString().substr(-2)
-      if (expiryDateYear !== undefined && expiryDateYear !== '') {
-        if (expiryDateYear < yearNow && expiryDateYear.length > 1) {
-          this.expiryDate = string.replaceAll(`/${expiryDateYear}`, `/${yearNow}`)
-        }
-      }
-    },
-    firstName (value) {
-      if (this.cardHolderNameState === true) {
-        this.fullName = value + ' ' + this.lastName
-      }
-    },
-    lastName (value) {
-      if (this.cardHolderNameState === true) {
-        this.fullName = this.firstName + ' ' + value
       }
     }
   },
@@ -412,7 +396,8 @@ export default {
       required: value => value === true
     },
     expiryDate: {
-      required
+      required,
+      validExpiryDate: validExpiryDate()
     },
     cvc: {
       required,

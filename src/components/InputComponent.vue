@@ -14,13 +14,15 @@
         :class=" validationState.$error ? 'border-red-700' : 'border-grey-100' "
         :value="value"
         @input="getInputValue"
-        @keypress="isNumber($event)"
+        @keypress="keypress($event)"
       >
     </div>
   </div>
 </template>
 
 <script>
+import { isNumber } from '@/utils.js'
+
 export default {
   name: 'InputComponent',
   props: {
@@ -48,16 +50,8 @@ export default {
     getInputValue (e) {
       this.$emit('input', e.target.value)
     },
-    isNumber (evt) {
-      evt = (evt) || window.event
-      if (this.id === 'firstName' || this.id === 'lastName') {
-        const charCode = (evt.which) ? evt.which : evt.keyCode
-        if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-          return true
-        } else {
-          evt.preventDefault()
-        }
-      }
+    keypress (event) {
+      isNumber(event)
     }
   }
 }

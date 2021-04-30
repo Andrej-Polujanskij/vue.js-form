@@ -2,9 +2,9 @@
   <div class="bg-grey-300 py-16">
     <transition name="modal-window">
       <ModalWindowComponent
-        v-if="paymentDone"
+        v-if="modalOpen"
         :payment-info="paymentInfo"
-        @close="paymentDone = false"
+        @close="modalOpen = false"
       />
     </transition>
     <div
@@ -23,13 +23,13 @@
               :key="item.id"
               :title="item.title"
               :value="item.price"
-              :validation-state="$v.price"
-              :picked-price="price"
+              :validation-state="$v.form.price"
+              :picked-price="form.price"
               @input="setPrice"
             />
           </div>
           <InputErrorHandler
-            :validation-state="$v.price"
+            :validation-state="$v.form.price"
           />
           <div class="font-bold text-18 mt-10">
             Customer Information
@@ -37,32 +37,32 @@
 
           <InputComponent
             id="firstName"
-            v-model.trim="firstName"
+            v-model.trim="form.firstName"
             name="First name"
-            :validation-state="$v.firstName"
+            :validation-state="$v.form.firstName"
           />
           <InputErrorHandler
-            :validation-state="$v.firstName"
+            :validation-state="$v.form.firstName"
           />
 
           <InputComponent
             id="lastName"
-            v-model.trim="lastName"
+            v-model.trim="form.lastName"
             name="Last name"
-            :validation-state="$v.lastName"
+            :validation-state="$v.form.lastName"
           />
           <InputErrorHandler
-            :validation-state="$v.lastName"
+            :validation-state="$v.form.lastName"
           />
 
           <InputComponent
             id="email"
-            v-model.trim="email"
+            v-model.trim="form.email"
             name="Email address"
-            :validation-state="$v.email"
+            :validation-state="$v.form.email"
           />
           <InputErrorHandler
-            :validation-state="$v.email"
+            :validation-state="$v.form.email"
           />
 
           <div class="font-bold text-18 mt-50">
@@ -82,12 +82,12 @@
                 v-model.trim="getFullName"
                 type="text"
                 class="border rounded-4 text-16 p-11 w-full"
-                :class="$v.fullName.$error ? 'border-red-700' : 'border-grey-100'"
-                @keypress="isNumber($event)"
+                :class="$v.form.fullName.$error ? 'border-red-700' : 'border-grey-100'"
+                @keypress="keyPress($event)"
               >
             </div>
             <InputErrorHandler
-              :validation-state="$v.fullName"
+              :validation-state="$v.form.fullName"
             />
           </div>
           <div class="flex flex-col">
@@ -100,12 +100,12 @@
             <div class="relative">
               <input
                 id="cardNumber"
-                v-model.number="cardNumber"
+                v-model.number="form.cardNumber"
                 v-cleave="{creditCard: true, creditCardStrictMode: true, onCreditCardTypeChanged : cardChanged}"
                 type="text"
                 name="cardNumber"
                 class="border rounded-4 text-16 p-11 w-full "
-                :class=" $v.cardNumber.$error ? 'border-red-700' : 'border-grey-100' "
+                :class=" $v.form.cardNumber.$error ? 'border-red-700' : 'border-grey-100' "
               >
               <div class="absolute right-14 top-0 bottom-0 flex">
                 <img
@@ -115,7 +115,7 @@
               </div>
             </div>
             <InputErrorHandler
-              :validation-state="$v.cardNumber"
+              :validation-state="$v.form.cardNumber"
             />
           </div>
 
@@ -130,15 +130,15 @@
               <div class="relative">
                 <input
                   id="expiryDate"
-                  v-model.trim="expiryDate"
+                  v-model.trim="form.expiryDate"
                   v-cleave="{date: true, datePattern: ['m', 'y']}"
                   type="text"
                   class="border rounded-4 text-16 p-11 w-full"
-                  :class=" $v.expiryDate.$error ? 'border-red-700' : 'border-grey-100' "
+                  :class=" $v.form.expiryDate.$error ? 'border-red-700' : 'border-grey-100' "
                 >
               </div>
               <InputErrorHandler
-                :validation-state="$v.expiryDate"
+                :validation-state="$v.form.expiryDate"
               />
             </div>
             <div class="flex flex-col w-1/2 mx-15">
@@ -151,11 +151,11 @@
               <div class="relative">
                 <input
                   id="cvc"
-                  v-model.number="cvc"
+                  v-model.number="form.cvc"
                   v-cleave="{numeral: true, numeralPositiveOnly: true, numeralIntegerScale: 6}"
                   type="text"
                   class="border rounded-4 text-16 p-11 w-full"
-                  :class=" $v.cvc.$error ? 'border-red-700' : 'border-grey-100' "
+                  :class=" $v.form.cvc.$error ? 'border-red-700' : 'border-grey-100' "
                 >
                 <div class="absolute right-14 top-0 bottom-0 flex">
                   <img
@@ -181,7 +181,7 @@
                 </div>
               </div>
               <InputErrorHandler
-                :validation-state="$v.cvc"
+                :validation-state="$v.form.cvc"
               />
             </div>
           </div>
@@ -191,7 +191,7 @@
               Total
             </div>
             <div class="font-bold text-22">
-              USD ${{ price }}
+              USD ${{ form.price }}
             </div>
           </div>
 
@@ -201,14 +201,14 @@
 
           <div
             class="px-15 py-8 bg-blue-100 border  rounded-2 flex items-baseline"
-            :class=" $v.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
+            :class=" $v.form.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
           >
             <div class="mr-15">
               <input
-                v-model="checkbox"
+                v-model="form.checkbox"
                 class="p-7 rounded-2"
                 type="checkbox"
-                :class=" $v.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
+                :class=" $v.form.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
               >
             </div>
             <div class="text-16 leading-22">
@@ -251,23 +251,9 @@ import ModalWindowComponent from './components/ModalWindowComponent.vue'
 import Cleave from 'cleave.js'
 import data from './data/plans.json'
 import cards from '@/assets/icons'
-import { required, minLength, email, helpers } from 'vuelidate/lib/validators'
-
-const maxWordsLength = (param) => helpers.withParams(
-  { type: 'maxWordsLength', max: param },
-  (value) => value.split(' ').length <= param
-)
-
-const date = new Date()
-const dateNow = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-
-const validExpiryDate = () => helpers.withParams(
-  { type: 'validExpiryDate', min: dateNow },
-  (value) => {
-    const expDate = new Date(20 + value.split('/')[1], value.split('/')[0] - 1, date.getDate())
-    return !(value !== '' && expDate <= dateNow)
-  }
-)
+import { isNumber } from '@/utils.js'
+import { maxWordsLength, validExpiryDate } from '@/validations.js'
+import { required, minLength, email } from 'vuelidate/lib/validators'
 
 export default {
   name: 'App',
@@ -280,46 +266,60 @@ export default {
   },
   data () {
     return {
-      price: '',
-      firstName: '',
-      lastName: '',
-      fullName: '',
-      email: '',
-      checkbox: null,
-      cardNumber: '',
-      expiryDate: '',
-      cvc: '',
+      form: {
+        price: '',
+        firstName: '',
+        lastName: '',
+        fullName: '',
+        email: '',
+        cardNumber: '',
+        expiryDate: '',
+        cvc: '',
+        checkbox: null
+      },
       blur: false,
-      dataPrice: [],
-      cardHolderNameState: true,
-      imagePath: '',
       tooltipOpen: false,
-      paymentDone: false,
+      modalOpen: false,
+      imagePath: '',
+      cardHolderNameState: true,
+      dataPrice: [],
       paymentInfo: {}
     }
   },
   computed: {
     getFullName: {
       get () {
-        return this.fullName
+        return this.form.fullName
       },
       set (newValue) {
-        this.fullName = newValue
+        this.form.fullName = newValue
         this.cardHolderNameState = false
+      }
+    }
+  },
+  watch: {
+    'form.firstName' (value) {
+      if (this.cardHolderNameState === true) {
+        this.form.fullName = value + ' ' + this.form.lastName
+      }
+    },
+    'form.lastName' (value) {
+      if (this.cardHolderNameState === true) {
+        this.form.fullName = this.form.firstName + ' ' + value
       }
     }
   },
   mounted () {
     this.dataPrice = data
     this.imagePath = cards.defaultCard
-    this.price = this.dataPrice.reduce((element, max) => element > max.price ? element : max.price, 0)
+    this.form.price = this.dataPrice.reduce((element, max) => element > max.price ? element : max.price, 0)
   },
   methods: {
     setPrice (price = null) {
-      this.price = price
+      this.form.price = price
     },
-    cardChanged (e) {
-      this.imagePath = cards[`${e}Card`] || cards.defaultCard
+    cardChanged (cardName) {
+      this.imagePath = cards[`${cardName}Card`] || cards.defaultCard
     },
     tooltipHandler () {
       this.tooltipOpen = !this.tooltipOpen
@@ -329,40 +329,35 @@ export default {
         this.tooltipOpen = false
       }
     },
-    isNumber (evt) {
-      evt = (evt) || window.event
-      const charCode = (evt.which) ? evt.which : evt.keyCode
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        return true
-      } else {
-        evt.preventDefault()
-      }
+    keyPress (event) {
+      isNumber(event)
     },
-
     submit () {
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('error!')
+        this.modalOpen = true
       } else {
         this.blur = true
-        console.log(this.price)
         setTimeout(() => {
           console.log('submit!')
-          this.paymentDone = true
-          this.paymentInfo.price = this.price
+          this.modalOpen = true
+          this.paymentInfo.firstName = this.form.firstName
+          this.paymentInfo.lastName = this.form.lastName
+          this.paymentInfo.email = this.form.email
+          this.paymentInfo.price = this.form.price
           this.blur = false
 
           this.firstName = ''
           this.lastName = ''
           this.fullName = ''
           this.email = ''
-
           this.cardNumber = ''
           this.expiryDate = ''
           this.cvc = ''
-
           this.checkbox = null
-          this.price = ''
+
+          this.form.price = ''
 
           this.$v.$reset()
         }, 500)
@@ -370,38 +365,40 @@ export default {
     }
   },
   validations: {
-    price: {
-      required
-    },
-    firstName: {
-      required,
-      minLength: minLength(2)
-    },
-    lastName: {
-      required,
-      minLength: minLength(4)
-    },
-    email: {
-      required,
-      email
-    },
-    fullName: {
-      required,
-      maxWordsLength: maxWordsLength(3)
-    },
-    cardNumber: {
-      required
-    },
-    checkbox: {
-      required: value => value === true
-    },
-    expiryDate: {
-      required,
-      validExpiryDate: validExpiryDate()
-    },
-    cvc: {
-      required,
-      minLength: minLength(3)
+    form: {
+      price: {
+        required
+      },
+      firstName: {
+        required,
+        minLength: minLength(2)
+      },
+      lastName: {
+        required,
+        minLength: minLength(4)
+      },
+      fullName: {
+        required,
+        maxWordsLength: maxWordsLength(3)
+      },
+      email: {
+        required,
+        email
+      },
+      cardNumber: {
+        required
+      },
+      expiryDate: {
+        required,
+        validExpiryDate: validExpiryDate()
+      },
+      cvc: {
+        required,
+        minLength: minLength(3)
+      },
+      checkbox: {
+        required: value => value === true
+      }
     }
   },
   // eslint-disable-next-line vue/order-in-components

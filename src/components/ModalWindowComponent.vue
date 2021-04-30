@@ -11,7 +11,15 @@
           Payment successful
         </div>
       </div>
-      <div class="px-16 py-10 flex justify-between">
+      <div class="px-16 my-8 flex justify-between">
+        <span class="text-18 text-gray-400">Customer name</span>
+        <span class="text-18 text-black-900 font-bold">{{ paymentInfo.firstName }} {{ paymentInfo.lastName }}</span>
+      </div>
+      <div class="px-16 my-8 flex justify-between">
+        <span class="text-18 text-gray-400">Email</span>
+        <span class="text-18 text-black-900 font-bold">{{ paymentInfo.email }}</span>
+      </div>
+      <div class="px-16 my-8 flex justify-between">
         <span class="text-18 text-gray-400">Amount paid</span>
         <span class="text-18 text-black-900 font-bold">{{ paymentInfo.price }}$</span>
       </div>

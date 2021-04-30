@@ -1,5 +1,3 @@
-// export  {card} from './card.svg'
-
 const cards = {
   defaultCard: require('./card.svg'),
   amexCard: require('./amex-card.svg'),

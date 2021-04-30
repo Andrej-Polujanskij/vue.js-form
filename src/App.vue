@@ -439,11 +439,6 @@ html {
   font-size: 10px;
 }
 
-//input[type="radio"]:checked + span {
-//  background: #ffef71;
-//  border: 1px solid #6EE7B7;
-//}
-
 .blur {
   filter: blur(3px);
 }
@@ -453,9 +448,6 @@ html {
     border-color: inherit !important;
     box-shadow: inherit !important;
   }
-}
-.modal-window-container{
-  transition: .3s ease-in-out;
 }
 .modal-window-enter, .modal-window-leave-to{
   opacity: 0;

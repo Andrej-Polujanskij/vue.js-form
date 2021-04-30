@@ -54,4 +54,8 @@ export default {
 </script>
 
 <style>
+.modal-window-container{
+  transition: .3s ease-in-out;
+}
+
 </style>

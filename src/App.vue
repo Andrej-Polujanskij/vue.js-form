@@ -191,7 +191,7 @@
               Total
             </div>
             <div class="font-bold text-22">
-              USD ${{ form.price }}
+              USD ${{ form.totalPrice }}
             </div>
           </div>
 
@@ -206,7 +206,7 @@
             <div class="mr-15">
               <input
                 v-model="form.checkbox"
-                class="p-7 rounded-2"
+                class="p-7 rounded-2 cursor-pointer"
                 type="checkbox"
                 :class=" $v.form.checkbox.$error ? 'border-red-700' : 'border-blue-150' "
               >
@@ -221,6 +221,41 @@
               </a>.
             </div>
           </div>
+
+          <div
+            class="mt-8 px-15 py-8 bg-blue-100 border border-blue-150 rounded-2 flex items-baseline "
+            :class="form.addFriend ? 'rounded-b-none border-b-0' : ''"
+          >
+            <div class="mr-15">
+              <input
+                v-model="form.addFriend"
+                class="p-7 rounded-2 border-blue-150 cursor-pointer"
+                type="checkbox"
+              >
+            </div>
+            <div class="text-16 leading-22">
+              Add a family member or a friend to your plan for only ${{ friendMemberPrice }}
+            </div>
+          </div>
+
+          <transition
+            name="friend-block"
+          >
+            <div
+              v-if="form.addFriend"
+              class="friend-block__input px-8 border border-blue-150 bg-blue-100 border-t-0"
+            >
+              <InputComponent
+                id="email"
+                v-model.trim="form.friendEmail"
+                name="Email address"
+                :validation-state="$v.form.friendEmail"
+              />
+              <div class="p-2 text-grey-600">
+                We will send them an email invitation to join
+              </div>
+            </div>
+          </transition>
 
           <div class="mt-20">
             <button
@@ -268,6 +303,7 @@ export default {
     return {
       form: {
         price: '',
+        totalPrice: '',
         firstName: '',
         lastName: '',
         fullName: '',
@@ -275,8 +311,11 @@ export default {
         cardNumber: '',
         expiryDate: '',
         cvc: '',
-        checkbox: null
+        checkbox: null,
+        addFriend: null,
+        friendEmail: ''
       },
+      friendMemberPrice: 5,
       blur: false,
       tooltipOpen: false,
       modalOpen: false,
@@ -307,12 +346,28 @@ export default {
       if (this.cardHolderNameState === true) {
         this.form.fullName = this.form.firstName + ' ' + value
       }
+    },
+    'form.addFriend' (value, oldValue) {
+      if (value === true) {
+        this.form.totalPrice = this.form.totalPrice + this.friendMemberPrice
+      }
+      if (oldValue === true) {
+        this.form.totalPrice = this.form.totalPrice - this.friendMemberPrice
+      }
+    },
+    'form.price' (value) {
+      this.form.totalPrice = parseFloat(value)
+
+      if (this.form.addFriend) {
+        this.form.totalPrice = parseFloat(value) + this.friendMemberPrice
+      }
     }
   },
   mounted () {
     this.dataPrice = data
     this.imagePath = cards.defaultCard
     this.form.price = this.dataPrice.reduce((element, max) => element > max.price ? element : max.price, 0)
+    this.form.totalPrice = this.form.price
   },
   methods: {
     setPrice (price = null) {
@@ -398,6 +453,9 @@ export default {
       },
       checkbox: {
         required: value => value === true
+      },
+      friendEmail: {
+        email
       }
     }
   },
@@ -458,6 +516,19 @@ html {
     opacity: 0;
     transform: translate(-50%, -100%);
   }
+}
+
+.friend-block-enter-active, .friend-block-leave-active{
+  transition: all .3s ease-in-out;
+}
+
+.friend-block-enter-to, .friend-block-leave {
+  max-height: 100px;
+  overflow: hidden;
+}
+.friend-block-enter, .friend-block-leave-to {
+  overflow: hidden;
+  max-height: 0;
 }
 
 </style>

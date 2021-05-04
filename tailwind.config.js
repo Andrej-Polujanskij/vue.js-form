@@ -5,6 +5,7 @@ module.exports = {
         160: '16rem'
       },
       colors: {
+        transparent: 'transparent',
         'orange-50': '#faebd7',
         'red-50': '#ffcfcf',
         'blue-50': '#a3c8ff7a',
@@ -13,6 +14,7 @@ module.exports = {
         'grey-100': '#D0D0D0',
         'grey-200': '#D1D5DB',
         'grey-300': '#E5E5E5',
+        'grey-600': '#5b5656',
         'green-200': '#ECFDF5',
         'green-300': '#6EE7B7',
         'green-350': '#21AB22',
@@ -24,6 +26,7 @@ module.exports = {
         28: '2.8rem'
       },
       spacing: {
+        2: '0.2rem',
         4: '0.4rem',
         7: '0.7rem',
         8: '0.8rem',
@@ -49,6 +52,7 @@ module.exports = {
       18: '1.8rem'
     },
     borderRadius: {
+      none: '0',
       2: '0.2rem',
       4: '0.4rem',
       5: '0.5rem',
